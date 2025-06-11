@@ -7,6 +7,8 @@ class NumberGame {
         this.result = document.getElementById('result');
         this.finalTime = document.getElementById('final-time');
         this.mistakeCountDisplay = document.getElementById('mistake-count');
+        this.bestTimeDisplay = document.getElementById('best-time');
+        this.bestMistakesDisplay = document.getElementById('best-mistakes');
         
         this.numbers = [];
         this.currentNumber = 1;
@@ -16,6 +18,7 @@ class NumberGame {
         this.mistakeCount = 0;
         
         this.initializeEventListeners();
+        this.loadBestScore();
         this.generateGrid();
     }
     
@@ -125,6 +128,9 @@ class NumberGame {
         const finalTime = ((Date.now() - this.startTime) / 1000).toFixed(2);
         this.finalTime.textContent = finalTime;
         this.mistakeCountDisplay.textContent = this.mistakeCount;
+        
+        this.checkAndUpdateBestScore(parseFloat(finalTime), this.mistakeCount);
+        
         this.result.style.display = 'block';
         this.startBtn.disabled = false;
     }
@@ -149,6 +155,55 @@ class NumberGame {
         cells.forEach(cell => {
             cell.classList.remove('game-started');
         });
+    }
+    
+    loadBestScore() {
+        const bestScore = JSON.parse(localStorage.getItem('brainNumberBestScore'));
+        if (bestScore) {
+            this.bestTimeDisplay.textContent = bestScore.time + '秒';
+            this.bestMistakesDisplay.textContent = bestScore.mistakes + '回';
+        }
+    }
+    
+    saveBestScore(time, mistakes) {
+        const bestScore = { time, mistakes };
+        localStorage.setItem('brainNumberBestScore', JSON.stringify(bestScore));
+    }
+    
+    checkAndUpdateBestScore(currentTime, currentMistakes) {
+        const bestScore = JSON.parse(localStorage.getItem('brainNumberBestScore'));
+        
+        let isNewBest = false;
+        
+        if (!bestScore) {
+            isNewBest = true;
+        } else {
+            // ミス数が少ない、または同じミス数でタイムが速い場合
+            if (currentMistakes < bestScore.mistakes || 
+                (currentMistakes === bestScore.mistakes && currentTime < bestScore.time)) {
+                isNewBest = true;
+            }
+        }
+        
+        if (isNewBest) {
+            this.saveBestScore(currentTime, currentMistakes);
+            this.bestTimeDisplay.textContent = currentTime + '秒';
+            this.bestMistakesDisplay.textContent = currentMistakes + '回';
+            
+            // 新記録の表示を追加
+            const newRecordMsg = document.createElement('p');
+            newRecordMsg.textContent = '🎉 新記録達成！';
+            newRecordMsg.style.color = '#38a169';
+            newRecordMsg.style.fontWeight = 'bold';
+            newRecordMsg.style.marginTop = '10px';
+            this.result.appendChild(newRecordMsg);
+            
+            setTimeout(() => {
+                if (newRecordMsg.parentNode) {
+                    newRecordMsg.parentNode.removeChild(newRecordMsg);
+                }
+            }, 3000);
+        }
     }
 }
 
