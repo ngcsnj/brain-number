@@ -58,6 +58,7 @@ class NumberGame {
         
         this.startBtn.disabled = true;
         
+        this.showNumbers();
         this.startTimer();
         this.resetCellStyles();
     }
@@ -77,6 +78,7 @@ class NumberGame {
         this.result.style.display = 'none';
         
         this.generateGrid();
+        this.hideNumbers();
     }
     
     startTimer() {
@@ -132,6 +134,20 @@ class NumberGame {
         cells.forEach(cell => {
             cell.classList.remove('clicked', 'wrong');
             cell.style.pointerEvents = 'auto';
+        });
+    }
+    
+    showNumbers() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach(cell => {
+            cell.classList.add('game-started');
+        });
+    }
+    
+    hideNumbers() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach(cell => {
+            cell.classList.remove('game-started');
         });
     }
 }
