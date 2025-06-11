@@ -52,7 +52,7 @@ h1 {
 .grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 5px;
+    gap: 5px 5px;
     margin-bottom: 20px;
     padding: 15px;
     background: #f7fafc;
