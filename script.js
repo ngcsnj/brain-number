@@ -6,12 +6,14 @@ class NumberGame {
         this.resetBtn = document.getElementById('reset-btn');
         this.result = document.getElementById('result');
         this.finalTime = document.getElementById('final-time');
+        this.mistakeCountDisplay = document.getElementById('mistake-count');
         
         this.numbers = [];
         this.currentNumber = 1;
         this.startTime = null;
         this.timerInterval = null;
         this.gameActive = false;
+        this.mistakeCount = 0;
         
         this.initializeEventListeners();
         this.generateGrid();
@@ -50,6 +52,7 @@ class NumberGame {
     startGame() {
         this.gameActive = true;
         this.currentNumber = 1;
+        this.mistakeCount = 0;
         this.startTime = Date.now();
         this.result.style.display = 'none';
         
@@ -101,6 +104,7 @@ class NumberGame {
                 this.completeGame();
             }
         } else {
+            this.mistakeCount++;
             cell.classList.add('wrong');
             setTimeout(() => {
                 cell.classList.remove('wrong');
@@ -118,6 +122,7 @@ class NumberGame {
         
         const finalTime = ((Date.now() - this.startTime) / 1000).toFixed(2);
         this.finalTime.textContent = finalTime;
+        this.mistakeCountDisplay.textContent = this.mistakeCount;
         this.result.style.display = 'block';
         this.startBtn.disabled = false;
     }
