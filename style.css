@@ -56,6 +56,11 @@ h1 {
     padding: 15px;
     margin-bottom: 20px;
     text-align: center;
+    transition: opacity 0.3s ease;
+}
+
+.top-scores.hidden {
+    display: none;
 }
 
 .top-scores h3 {

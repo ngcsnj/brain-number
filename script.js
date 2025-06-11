@@ -7,6 +7,7 @@ class NumberGame {
         this.result = document.getElementById('result');
         this.finalTime = document.getElementById('final-time');
         this.mistakeCountDisplay = document.getElementById('mistake-count');
+        this.topScoresElement = document.getElementById('top-scores');
         
         this.numbers = [];
         this.currentNumber = 1;
@@ -59,6 +60,7 @@ class NumberGame {
         
         this.startBtn.disabled = true;
         
+        this.hideTopScores();
         this.showNumbers();
         this.startTimer();
         this.resetCellStyles();
@@ -78,6 +80,7 @@ class NumberGame {
         this.startBtn.disabled = false;
         this.result.style.display = 'none';
         
+        this.showTopScores();
         this.generateGrid();
         this.hideNumbers();
     }
@@ -143,6 +146,7 @@ class NumberGame {
             }, 3000);
         }
         
+        this.showTopScores();
         this.result.style.display = 'block';
         this.startBtn.disabled = false;
     }
@@ -216,6 +220,14 @@ class NumberGame {
                 scoreElement.textContent = '記録なし';
             }
         }
+    }
+    
+    hideTopScores() {
+        this.topScoresElement.classList.add('hidden');
+    }
+    
+    showTopScores() {
+        this.topScoresElement.classList.remove('hidden');
     }
 }
 
