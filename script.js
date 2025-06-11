@@ -2,7 +2,6 @@ class NumberGame {
     constructor() {
         this.grid = document.getElementById('grid');
         this.timeDisplay = document.getElementById('time');
-        this.nextDisplay = document.getElementById('next');
         this.startBtn = document.getElementById('start-btn');
         this.resetBtn = document.getElementById('reset-btn');
         this.result = document.getElementById('result');
@@ -26,7 +25,7 @@ class NumberGame {
     generateRandomNumbers() {
         const numbers = [];
         while (numbers.length < 16) {
-            const randomNum = Math.floor(Math.random() * 99) + 1;
+            const randomNum = Math.floor(Math.random() * 50) + 1;
             if (!numbers.includes(randomNum)) {
                 numbers.push(randomNum);
             }
@@ -55,7 +54,6 @@ class NumberGame {
         this.result.style.display = 'none';
         
         this.startBtn.disabled = true;
-        this.nextDisplay.textContent = this.currentNumber;
         
         this.startTimer();
         this.resetCellStyles();
@@ -72,7 +70,6 @@ class NumberGame {
         }
         
         this.timeDisplay.textContent = '0.00';
-        this.nextDisplay.textContent = '1';
         this.startBtn.disabled = false;
         this.result.style.display = 'none';
         
@@ -99,9 +96,6 @@ class NumberGame {
             cell.style.pointerEvents = 'none';
             this.currentNumber++;
             
-            if (this.currentNumber <= 16) {
-                this.nextDisplay.textContent = sortedNumbers[this.currentNumber - 1];
-            }
             
             if (this.currentNumber > 16) {
                 this.completeGame();
