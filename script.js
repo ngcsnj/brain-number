@@ -61,6 +61,7 @@ class NumberGame {
         this.startBtn.disabled = true;
         
         this.hideTopScores();
+        this.generateGrid();
         this.showNumbers();
         this.startTimer();
         this.resetCellStyles();
