@@ -7,8 +7,6 @@ class NumberGame {
         this.result = document.getElementById('result');
         this.finalTime = document.getElementById('final-time');
         this.mistakeCountDisplay = document.getElementById('mistake-count');
-        this.bestTimeDisplay = document.getElementById('best-time');
-        this.bestMistakesDisplay = document.getElementById('best-mistakes');
         
         this.numbers = [];
         this.currentNumber = 1;
@@ -18,7 +16,7 @@ class NumberGame {
         this.mistakeCount = 0;
         
         this.initializeEventListeners();
-        this.loadBestScore();
+        this.loadTopScores();
         this.generateGrid();
     }
     
@@ -129,7 +127,21 @@ class NumberGame {
         this.finalTime.textContent = finalTime;
         this.mistakeCountDisplay.textContent = this.mistakeCount;
         
-        this.checkAndUpdateBestScore(parseFloat(finalTime), this.mistakeCount);
+        const newRank = this.addToTopScores(parseFloat(finalTime), this.mistakeCount);
+        if (newRank > 0) {
+            const newRecordMsg = document.createElement('p');
+            newRecordMsg.textContent = `🎉 ${newRank}位にランクイン！`;
+            newRecordMsg.style.color = '#38a169';
+            newRecordMsg.style.fontWeight = 'bold';
+            newRecordMsg.style.marginTop = '10px';
+            this.result.appendChild(newRecordMsg);
+            
+            setTimeout(() => {
+                if (newRecordMsg.parentNode) {
+                    newRecordMsg.parentNode.removeChild(newRecordMsg);
+                }
+            }, 3000);
+        }
         
         this.result.style.display = 'block';
         this.startBtn.disabled = false;
@@ -157,52 +169,52 @@ class NumberGame {
         });
     }
     
-    loadBestScore() {
-        const bestScore = JSON.parse(localStorage.getItem('brainNumberBestScore'));
-        if (bestScore) {
-            this.bestTimeDisplay.textContent = bestScore.time + '秒';
-            this.bestMistakesDisplay.textContent = bestScore.mistakes + '回';
-        }
+    loadTopScores() {
+        const topScores = JSON.parse(localStorage.getItem('brainNumberTopScores')) || [];
+        this.displayTopScores(topScores);
     }
     
-    saveBestScore(time, mistakes) {
-        const bestScore = { time, mistakes };
-        localStorage.setItem('brainNumberBestScore', JSON.stringify(bestScore));
+    saveTopScores(scores) {
+        localStorage.setItem('brainNumberTopScores', JSON.stringify(scores));
     }
     
-    checkAndUpdateBestScore(currentTime, currentMistakes) {
-        const bestScore = JSON.parse(localStorage.getItem('brainNumberBestScore'));
+    addToTopScores(time, mistakes) {
+        let topScores = JSON.parse(localStorage.getItem('brainNumberTopScores')) || [];
         
-        let isNewBest = false;
+        const newScore = { time, mistakes };
+        topScores.push(newScore);
         
-        if (!bestScore) {
-            isNewBest = true;
-        } else {
-            // ミス数が少ない、または同じミス数でタイムが速い場合
-            if (currentMistakes < bestScore.mistakes || 
-                (currentMistakes === bestScore.mistakes && currentTime < bestScore.time)) {
-                isNewBest = true;
+        // タイム優先でソート（タイムが速い順、同じタイムならミス少ない順）
+        topScores.sort((a, b) => {
+            if (a.time !== b.time) {
+                return a.time - b.time;
             }
-        }
+            return a.mistakes - b.mistakes;
+        });
         
-        if (isNewBest) {
-            this.saveBestScore(currentTime, currentMistakes);
-            this.bestTimeDisplay.textContent = currentTime + '秒';
-            this.bestMistakesDisplay.textContent = currentMistakes + '回';
-            
-            // 新記録の表示を追加
-            const newRecordMsg = document.createElement('p');
-            newRecordMsg.textContent = '🎉 新記録達成！';
-            newRecordMsg.style.color = '#38a169';
-            newRecordMsg.style.fontWeight = 'bold';
-            newRecordMsg.style.marginTop = '10px';
-            this.result.appendChild(newRecordMsg);
-            
-            setTimeout(() => {
-                if (newRecordMsg.parentNode) {
-                    newRecordMsg.parentNode.removeChild(newRecordMsg);
-                }
-            }, 3000);
+        // Top3のみ保持
+        topScores = topScores.slice(0, 3);
+        
+        this.saveTopScores(topScores);
+        this.displayTopScores(topScores);
+        
+        // 新しいスコアがTop3に入ったかチェック
+        const newRankIndex = topScores.findIndex(score => 
+            score.time === time && score.mistakes === mistakes
+        );
+        
+        return newRankIndex >= 0 ? newRankIndex + 1 : 0;
+    }
+    
+    displayTopScores(scores) {
+        for (let i = 1; i <= 3; i++) {
+            const scoreElement = document.getElementById(`score-${i}`);
+            if (scores[i - 1]) {
+                const score = scores[i - 1];
+                scoreElement.textContent = `${score.time}秒 (ミス${score.mistakes}回)`;
+            } else {
+                scoreElement.textContent = '記録なし';
+            }
         }
     }
 }
