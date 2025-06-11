@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字順押し脳トレゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>数字順押し脳トレゲーム</h1>
+        <div class="game-info">
+            <div class="timer">
+                タイム: <span id="time">0.00</span>秒
+            </div>
+            <div class="next-number">
+                次の数字: <span id="next">1</span>
+            </div>
+        </div>
+        <div class="grid" id="grid">
+            <!-- 4x4のグリッドがJavaScriptで生成される -->
+        </div>
+        <div class="controls">
+            <button id="start-btn">ゲーム開始</button>
+            <button id="reset-btn">リセット</button>
+        </div>
+        <div class="result" id="result" style="display: none;">
+            <h2>ゲーム完了！</h2>
+            <p>クリアタイム: <span id="final-time"></span>秒</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
